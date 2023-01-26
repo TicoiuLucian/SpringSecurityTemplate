@@ -1,26 +1,40 @@
 package ro.itschool.startup;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.github.javafaker.Faker;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import ro.itschool.entity.MyUser;
+import ro.itschool.entity.Product;
 import ro.itschool.entity.Role;
+import ro.itschool.entity.ShoppingCart;
+import ro.itschool.repository.ProductRepository;
 import ro.itschool.repository.RoleRepository;
+import ro.itschool.repository.UserRepository;
+import ro.itschool.service.ShoppingCartService;
 import ro.itschool.service.UserService;
 import ro.itschool.util.Constants;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 
 @Component
+@RequiredArgsConstructor
 public class RunAtStartup {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
-    @Autowired
-    private RoleRepository roleRepository;
+    private final RoleRepository roleRepository;
+
+    private final ProductRepository productRepository;
+
+    private final ShoppingCartService shoppingCartService;
+
+    private final UserRepository userRepository;
+
 
     @EventListener(ContextRefreshedEvent.class)
     public void contextRefreshedEvent() {
@@ -30,6 +44,7 @@ public class RunAtStartup {
 
         saveUser();
         saveAdminUser();
+        save50Products();
     }
 
     private void saveAdminUser() {
@@ -54,6 +69,7 @@ public class RunAtStartup {
     }
 
     public void saveUser() {
+        Faker faker = new Faker();
         MyUser myUser = new MyUser();
         myUser.setUsername("user");
         myUser.setPassword("user");
@@ -70,7 +86,34 @@ public class RunAtStartup {
         myUser.setPasswordConfirm("user");
         myUser.setRandomTokenEmail("randomToken");
 
-        userService.saveUser(myUser);
+        MyUser myUser1 = userService.saveUser(myUser);
+
+        List<Product> products = Stream
+                .generate(() -> productRepository.save(
+                                new Product(faker.pokemon().name(), faker.number().numberBetween(100, 10000), faker.bool().bool()))
+                        )
+                        .limit(10)
+                        .toList();
+
+        ShoppingCart cart = myUser1.getShoppingCart();
+        cart.setUser(myUser1);
+        cart.setProducts(products);
+
+//        ShoppingCart myCart = shoppingCartService.save(cart);
+
+//        myUser1.setShoppingCart(cart);
+        userService.updateUser(myUser1);
+
+    }
+
+    public void save50Products() {
+        Faker faker = new Faker();
+        Stream
+                .generate(() -> productRepository.save(
+                        new Product(faker.pokemon().name(), faker.number().numberBetween(100, 10000), faker.bool().bool()))
+                )
+                .limit(50)
+                .toList();
     }
 
 

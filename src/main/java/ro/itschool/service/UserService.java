@@ -23,8 +23,7 @@ public interface UserService {
 
     MyUser saveUser(MyUser u);
 
-    void updateUser(MyUser user);
-
+    MyUser updateUser(MyUser user);
 
     Optional<MyUser> findById(Long id);
 }

@@ -33,7 +33,7 @@ public class WebSecurityConfig {
                 .and().formLogin()
                 .loginPage("/login")
                 .failureUrl("/login-error")
-                .defaultSuccessUrl("/index").and()
+                .defaultSuccessUrl("/product/all").and()
                 .logout().logoutSuccessUrl("/login").and()
                 .sessionManagement()
                 .maximumSessions(1);

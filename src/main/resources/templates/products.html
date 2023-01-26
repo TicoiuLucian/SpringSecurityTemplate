@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Security</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.1.1/css/all.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <link th:rel="stylesheet" th:href="@{/webjars/bootstrap/4.0.0-2/css/bootstrap.min.css} "/>
+    <link th:href="@{/css/topnav.css}" rel="stylesheet"/>
+
+</head>
+<body>
+
+<header>
+    <div th:replace="fragments/navs.html :: topnav"></div>
+</header>
+
+<main>
+<div class="row">
+    <div class="col-md-3"></div>
+    <div class="col-md-6">
+        <table class="table table-striped table-responsive-md">
+            <thead class="thead-dark">
+            <tr>
+                <th> Id </th>
+                <th> Name</th>
+                <th> Price</th>
+                <th sec:authorize="hasRole('ROLE_ADMIN')"> Delete product</th>
+                <th> Add to cart</th>
+
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${products.empty}">
+                <td colspan="3"> No Products Available</td>
+            </tr>
+            <tr th:each="product : ${products}">
+                <td><span th:text="${product.id}">  </span></td>
+                <td><span th:text="${product.name}">  </span></td>
+                <td><span th:text="${product.price}"> </span></td>
+                <td sec:authorize="hasRole('ROLE_ADMIN')"><a th:href="@{'/product/delete/' + ${product.id}}"
+                                                             class="fa-solid fa-trash"></a>
+                </td>
+                <td><a th:href="@{'/product/add/' + ${product.id}}" class="fa-solid fa-plus"></a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="col-md-3"></div>
+</div>
+</main>
+<footer>
+</footer>
+
+<script th:src="@{/webjars/jquery/jquery.min.js}"></script>
+<script th:src="@{/webjars/popper.js/umd/popper.min.js}"></script>
+<script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+
+<script>
+    $('#add-account-modal').on('show.bs.modal', function () {
+        $.get("/modals/add-bank-account", function (data) {
+            $('#add-account-modal').find('.modal-body').html(data);
+        })
+    });
+
+    $('#transfer-money-modal').on('show.bs.modal', function () {
+        $.get("/modals/transfer-money", function (data) {
+            $('#transfer-money-modal').find('.modal-body').html(data);
+        })
+    });
+
+    $('#pay-a-bill-modal').on('show.bs.modal', function () {
+        $.get("/modals/pay-a-bill", function (data) {
+            $('#pay-a-bill-modal').find('.modal-body').html(data);
+        })
+    });
+
+  $('#transfer-money-to-user-iban-modal').on('show.bs.modal', function () {
+        $.get("/modals/transfer-money-to-user-iban", function (data) {
+            $('#transfer-money-to-user-iban-modal').find('.modal-body').html(data);
+        })
+    });
+
+</script>
+
+</body>
+</html>
