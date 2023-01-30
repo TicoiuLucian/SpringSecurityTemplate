@@ -43,6 +43,7 @@ public class RunAtStartup {
         roleRepository.save(new Role(Constants.ROLE_ADMIN));
 
         saveUser();
+        saveUserToDelete();
         saveAdminUser();
         save50Products();
     }
@@ -90,10 +91,10 @@ public class RunAtStartup {
 
         List<Product> products = Stream
                 .generate(() -> productRepository.save(
-                                new Product(faker.pokemon().name(), faker.number().numberBetween(100, 10000), faker.bool().bool()))
-                        )
-                        .limit(10)
-                        .toList();
+                        new Product(faker.pokemon().name(), faker.number().numberBetween(100, 10000), faker.bool().bool()))
+                )
+                .limit(10)
+                .toList();
 
         ShoppingCart cart = myUser1.getShoppingCart();
         cart.setUser(myUser1);
@@ -116,5 +117,25 @@ public class RunAtStartup {
                 .toList();
     }
 
+    public void saveUserToDelete() {
+        MyUser myUser = new MyUser();
+        myUser.setUsername("userToDelete");
+        myUser.setPassword("user");
+        myUser.setRandomToken("randomToken");
+        final Set<Role> roles = new HashSet<>();
+        roles.add(roleRepository.findByName(Constants.ROLE_USER));
+        myUser.setRoles(roles);
+        myUser.setEnabled(true);
+        myUser.setAccountNonExpired(true);
+        myUser.setAccountNonLocked(true);
+        myUser.setCredentialsNonExpired(true);
+        myUser.setEmail("userDeleteMe@gmail.com");
+        myUser.setFullName("Ion DeleteMe User");
+        myUser.setPasswordConfirm("user");
+        myUser.setRandomTokenEmail("randomToken");
+
+        userService.saveUser(myUser);
+
+    }
 
 }

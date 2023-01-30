@@ -5,8 +5,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import ro.itschool.entity.MyUser;
 import ro.itschool.entity.Product;
 import ro.itschool.repository.ProductRepository;
@@ -67,6 +66,19 @@ public class ProductController {
             userService.updateUser(userByUserName);
         });
 
+        return Constants.REDIRECT_TO_PRODUCTS;
+    }
+
+    @GetMapping(value = "/add-new")
+    public String addProduct(Model model) {
+        model.addAttribute("product", new Product());
+        return "add-product";
+    }
+
+    @PostMapping(value = "/add-new")
+    public String addProduct(@ModelAttribute("product") @RequestBody Product product) {
+        product.setDeleted(false);
+        productRepository.save(product);
         return Constants.REDIRECT_TO_PRODUCTS;
     }
 

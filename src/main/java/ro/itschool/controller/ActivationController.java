@@ -27,7 +27,6 @@ public class ActivationController {
             return "activation";
         } else
             return "invalid-token";
-
     }
 
     @PostMapping(value = "/activation/{randomToken}")

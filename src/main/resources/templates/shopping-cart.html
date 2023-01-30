@@ -68,32 +68,5 @@
 <script th:src="@{/webjars/popper.js/umd/popper.min.js}"></script>
 <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
 
-<script>
-    $('#add-account-modal').on('show.bs.modal', function () {
-        $.get("/modals/add-bank-account", function (data) {
-            $('#add-account-modal').find('.modal-body').html(data);
-        })
-    });
-
-    $('#transfer-money-modal').on('show.bs.modal', function () {
-        $.get("/modals/transfer-money", function (data) {
-            $('#transfer-money-modal').find('.modal-body').html(data);
-        })
-    });
-
-    $('#pay-a-bill-modal').on('show.bs.modal', function () {
-        $.get("/modals/pay-a-bill", function (data) {
-            $('#pay-a-bill-modal').find('.modal-body').html(data);
-        })
-    });
-
-  $('#transfer-money-to-user-iban-modal').on('show.bs.modal', function () {
-        $.get("/modals/transfer-money-to-user-iban", function (data) {
-            $('#transfer-money-to-user-iban-modal').find('.modal-body').html(data);
-        })
-    });
-
-</script>
-
 </body>
 </html>

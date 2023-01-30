@@ -26,4 +26,6 @@ public interface UserService {
     MyUser updateUser(MyUser user);
 
     Optional<MyUser> findById(Long id);
+
+    List<MyUser> searchUser(String keyword);
 }

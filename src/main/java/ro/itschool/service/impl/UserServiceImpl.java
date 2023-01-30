@@ -72,6 +72,11 @@ public class UserServiceImpl implements UserService {
         return userRepository.findById(id);
     }
 
+    @Override
+    public List<MyUser> searchUser(String keyword) {
+        return userRepository.searchUser(Objects.requireNonNullElse(keyword, ""));
+    }
+
     private List<GrantedAuthority> getUserAuthority(Set<Role> userRoles) {
         Set<GrantedAuthority> roles = new HashSet<>();
         for (Role role : userRoles) {
