@@ -24,11 +24,12 @@ public class Product {
 
     private float price;
 
-    private Boolean deleted;
 
-    public Product(String name, float price, Boolean deleted) {
+    private Integer quantity;
+
+    public Product(String name, float price, Integer quantity) {
         this.name = name;
         this.price = price;
-        this.deleted = deleted;
+        this.quantity = quantity;
     }
 }

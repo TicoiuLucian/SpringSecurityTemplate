@@ -10,5 +10,5 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 
     Optional<Product> findByName(String name);
 
-    List<Product> findByDeletedIsFalse();
+    List<Product> findByQuantityGreaterThan(Long quantity);
 }

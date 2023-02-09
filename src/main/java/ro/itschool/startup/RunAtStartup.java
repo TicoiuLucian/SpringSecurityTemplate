@@ -54,7 +54,6 @@ public class RunAtStartup {
         myUser.setPassword("admin");
         myUser.setRandomToken("randomToken");
         final Set<Role> roles = new HashSet<>();
-        roles.add(roleRepository.findByName(Constants.ROLE_USER));
         roles.add(roleRepository.findByName(Constants.ROLE_ADMIN));
         myUser.setRoles(roles);
         myUser.setEnabled(true);
@@ -91,7 +90,10 @@ public class RunAtStartup {
 
         List<Product> products = Stream
                 .generate(() -> productRepository.save(
-                        new Product(faker.pokemon().name(), faker.number().numberBetween(100, 10000), faker.bool().bool()))
+                        new Product(
+                                faker.pokemon().name(),
+                                faker.number().numberBetween(100, 10000),
+                                faker.number().numberBetween(0, 199)))
                 )
                 .limit(10)
                 .toList();
@@ -111,9 +113,12 @@ public class RunAtStartup {
         Faker faker = new Faker();
         Stream
                 .generate(() -> productRepository.save(
-                        new Product(faker.pokemon().name(), faker.number().numberBetween(100, 10000), faker.bool().bool()))
+                        new Product(
+                                faker.pokemon().name(),
+                                faker.number().numberBetween(100, 10000),
+                                faker.number().numberBetween(0, 199)))
                 )
-                .limit(50)
+                .limit(5)
                 .toList();
     }
 

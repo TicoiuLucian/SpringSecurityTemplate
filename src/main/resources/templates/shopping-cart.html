@@ -1,65 +1,65 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
-  <title>Security</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css">
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.1.1/css/all.css">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-  <link th:rel="stylesheet" th:href="@{/webjars/bootstrap/4.0.0-2/css/bootstrap.min.css} "/>
-  <link th:href="@{/css/topnav.css}" rel="stylesheet"/>
+    <title>Security</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.1.1/css/all.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <link th:rel="stylesheet" th:href="@{/webjars/bootstrap/4.0.0-2/css/bootstrap.min.css} "/>
+    <link th:href="@{/css/topnav.css}" rel="stylesheet"/>
 
 </head>
 <body>
 
 <header>
-  <div th:replace="fragments/navs.html :: topnav"></div>
+    <div th:replace="fragments/navs.html :: topnav"></div>
 </header>
 
 <main>
-  <div class="row">
-    <div class="col-md-3"></div>
-    <div class="col-md-6">
-      <table class="table table-striped table-responsive-md">
-        <thead class="thead-dark">
-        <tr>
-          <th> Name</th>
-          <th> Price</th>
-          <th> Not available </th>
-          <th></th>
+    <div class="row">
+        <div class="col-md-3"></div>
+        <div class="col-md-6">
+            <table class="table table-striped table-responsive-md">
+                <thead class="thead-dark">
+                <tr>
+                    <th> Name</th>
+                    <th> Price</th>
+                    <th> Quantity</th>
+                    <th></th>
 
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:if="${products.empty}">
-          <td colspan="3"> Shopping Cart empty</td>
-        </tr>
-        <tr th:each="product : ${products}">
-          <td><span th:text="${product.name}">  </span></td>
-          <td><span th:text="${product.price}"> </span></td>
-          <td><span th:text="${product.deleted}"> </span></td>
-          <td ><a th:href="@{'/shopping-cart/product/remove/' + ${product.id}}"
-                                                       class="fa-solid fa-trash"></a>
-          </td>
-        </tr>
-        </tbody>
-      </table>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${products.empty}">
+                    <td colspan="3"> Shopping Cart empty</td>
+                </tr>
+                <tr th:each="product : ${products}">
+                    <td><span th:text="${product.name}">  </span></td>
+                    <td><span th:text="${product.price}"> </span></td>
+                    <td><span th:text="${product.quantity}"> </span></td>
+                    <td><a th:href="@{'/shopping-cart/product/remove/' + ${product.id}}"
+                           class="fa-solid fa-trash"></a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
 
-      <div class="card-body">
-        <form th:action="@{'/shopping-cart/to-order'}" method="POST">
-          <div class="box-footer text-center">
-            <button type="submit" class="btn btn-dark">Buy</button>
-          </div>
-        </form>
-      </div>
+            <div class="card-body">
+                <form th:action="@{'/shopping-cart/to-order'}" method="POST">
+                    <div class="box-footer text-center">
+                        <button type="submit" class="btn btn-dark">Buy</button>
+                    </div>
+                </form>
+            </div>
 
 
+        </div>
+        <div class="col-md-3"></div>
     </div>
-    <div class="col-md-3"></div>
-  </div>
 </main>
 <footer>
 </footer>
