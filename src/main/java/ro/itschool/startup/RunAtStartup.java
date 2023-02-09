@@ -5,12 +5,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
-import ro.itschool.entity.MyUser;
-import ro.itschool.entity.Product;
-import ro.itschool.entity.Role;
-import ro.itschool.entity.ShoppingCart;
+import ro.itschool.entity.*;
 import ro.itschool.repository.ProductRepository;
 import ro.itschool.repository.RoleRepository;
+import ro.itschool.repository.ShoppingCartProductQuantityRepository;
 import ro.itschool.repository.UserRepository;
 import ro.itschool.service.ShoppingCartService;
 import ro.itschool.service.UserService;
@@ -35,6 +33,8 @@ public class RunAtStartup {
 
     private final UserRepository userRepository;
 
+    private final ShoppingCartProductQuantityRepository quantityRepository;
+
 
     @EventListener(ContextRefreshedEvent.class)
     public void contextRefreshedEvent() {
@@ -43,8 +43,8 @@ public class RunAtStartup {
         roleRepository.save(new Role(Constants.ROLE_ADMIN));
 
         saveUser();
-        saveUserToDelete();
-        saveAdminUser();
+//        saveUserToDelete();
+//        saveAdminUser();
         save50Products();
     }
 
@@ -89,13 +89,17 @@ public class RunAtStartup {
         MyUser myUser1 = userService.saveUser(myUser);
 
         List<Product> products = Stream
-                .generate(() -> productRepository.save(
-                        new Product(
-                                faker.pokemon().name(),
-                                faker.number().numberBetween(100, 10000),
-                                faker.number().numberBetween(0, 199)))
+                .generate(() -> {
+                            Product product = productRepository.save(
+                                    new Product(
+                                            faker.pokemon().name(),
+                                            faker.number().numberBetween(100, 10000),
+                                            faker.number().numberBetween(0, 199)));
+                            quantityRepository.save(new ShoppingCartProductQuantity(myUser.getShoppingCart().getId(), product.getId(), 5));
+                            return product;
+                        }
                 )
-                .limit(10)
+                .limit(3)
                 .toList();
 
         ShoppingCart cart = myUser1.getShoppingCart();

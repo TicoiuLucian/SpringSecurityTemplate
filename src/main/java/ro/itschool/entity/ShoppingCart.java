@@ -20,7 +20,8 @@ public class ShoppingCart {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    //    @ManyToMany(fetch = FetchType.EAGER)
+    @Transient
     private List<Product> products = new ArrayList<>();
 
     @OneToOne(mappedBy = "shoppingCart")
