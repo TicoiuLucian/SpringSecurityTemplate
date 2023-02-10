@@ -8,7 +8,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ro.itschool.entity.MyUser;
 import ro.itschool.entity.Product;
+import ro.itschool.entity.ShoppingCartProductQuantity;
 import ro.itschool.repository.ProductRepository;
+import ro.itschool.repository.ShoppingCartProductQuantityRepository;
 import ro.itschool.service.ShoppingCartService;
 import ro.itschool.service.UserService;
 import ro.itschool.util.Constants;
@@ -27,6 +29,10 @@ public class ProductController {
 
     @Autowired
     private UserService userService;
+
+
+    @Autowired
+    private ShoppingCartProductQuantityRepository quantityRepository;
 
 //    @GetMapping(value = "/all")
 //    public List<Product> getAllProducts() {
@@ -74,6 +80,7 @@ public class ProductController {
 
 
             product.setQuantity(product.getQuantity() - quantityToBeOrdered);
+            quantityRepository.save(new ShoppingCartProductQuantity(userByUserName.getId().intValue(), product.getId(), quantityToBeOrdered));
             productRepository.save(product);
             userService.updateUser(userByUserName);
         });

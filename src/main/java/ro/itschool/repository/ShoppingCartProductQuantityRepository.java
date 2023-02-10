@@ -10,7 +10,7 @@ import java.util.List;
 public interface ShoppingCartProductQuantityRepository extends JpaRepository<ShoppingCartProductQuantity, Long> {
 
     @Query(value = "SELECT new ro.itschool.entity.Product(p.id, p.name, p.price, s.quantity) from Product p inner join ShoppingCartProductQuantity s " +
-            "on p.id = s.id where shoppingCartId = :id")
+            "on p.id = s.productId where shoppingCartId = :id")
     List<Product> getProductsByShoppingCartId(Long id);
 
 }
