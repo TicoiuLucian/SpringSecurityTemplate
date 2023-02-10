@@ -30,14 +30,8 @@ public class ProductController {
     @Autowired
     private UserService userService;
 
-
     @Autowired
     private ShoppingCartProductQuantityRepository quantityRepository;
-
-//    @GetMapping(value = "/all")
-//    public List<Product> getAllProducts() {
-//        return productRepository.findAll();
-//    }
 
 
     @RequestMapping(value = {"/all"})
