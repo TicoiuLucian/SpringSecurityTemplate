@@ -31,7 +31,31 @@
 </header>
 
 <main>
-    Order Placed Successfully
+    ORDER DETAILS
+    <span th:text="${order.id}"/>
+    <span th:text="${order.orderDate}"/>
+
+
+    <div class="row">
+        <div class="col-md-3"></div>
+        <div class="col-md-6">
+            <table class="table table-striped table-responsive-md">
+                <thead class="thead-dark">
+                <tr>
+                    <th> Name</th>
+                    <th> Price</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="product : ${order.products}">
+                    <td><span th:text="${product.name}">  </span></td>
+                    <td><span th:text="${product.price}"> </span></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-3"></div>
+    </div>
 </main>
 <footer>
 </footer>

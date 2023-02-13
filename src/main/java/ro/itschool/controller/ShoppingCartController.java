@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import ro.itschool.entity.MyUser;
+import ro.itschool.entity.Order;
 import ro.itschool.entity.Product;
 import ro.itschool.repository.OrderRepository;
 import ro.itschool.repository.ProductRepository;
@@ -36,7 +37,7 @@ public class ShoppingCartController {
     private ShoppingCartProductQuantityRepository quantityRepository;
 
     @RequestMapping(value = "/to-order")
-    public String convertToOrder() {
+    public String convertToOrder(Model model) {
 
         //stabilim care e username-ul user-ului autentificat
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -51,10 +52,10 @@ public class ShoppingCartController {
             user.setShoppingCart(cart);
         });
 
-        orderRepository.save(shoppingCartService.convertShoppingCartToOrder(user.getShoppingCart()));
+        Order order = orderRepository.save(shoppingCartService.convertShoppingCartToOrder(user.getShoppingCart()));
         user.getShoppingCart().getProducts().clear();
         quantityRepository.deleteByShoppingCartId(user.getId().intValue());
-
+        model.addAttribute("order", order);
         return "order-successful";
     }
 
