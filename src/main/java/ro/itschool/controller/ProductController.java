@@ -1,6 +1,6 @@
 package ro.itschool.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -18,25 +18,20 @@ import ro.itschool.util.Constants;
 import java.util.Optional;
 
 @Controller
+@RequiredArgsConstructor
 @RequestMapping(value = "/product")
 public class ProductController {
 
-    @Autowired
-    private ProductRepository productRepository;
+    private final ProductRepository productRepository;
 
-    @Autowired
-    private ShoppingCartService shoppingCartService;
+    private final ShoppingCartService shoppingCartService;
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
-    @Autowired
-    private ShoppingCartProductQuantityRepository quantityRepository;
-
+    private final ShoppingCartProductQuantityRepository quantityRepository;
 
     @RequestMapping(value = {"/all"})
     public String index(Model model) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         model.addAttribute("products", productRepository.findByQuantityGreaterThan(0L));
         return "products";
     }
@@ -50,42 +45,62 @@ public class ProductController {
 
     @RequestMapping(value = "/add/{id}")
     public String addProductToShoppingCart(@PathVariable Integer id, @ModelAttribute("product") @RequestBody Product frontendProduct) {
-        //cautam produsul dupa id
-        Optional<Product> optionalProduct = productRepository.findById(id);
-
-        //stabilim care e username-ul user-ului autentificat
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String currentPrincipalName = auth.getName();
-
-        //aducem userul din db pe baza username-ului
-        MyUser userByUserName = userService.findUserByUserName(currentPrincipalName);
-
+        Optional<Product> desiredProductOptional = productRepository.findById(id);
+        if (frontendProduct == null) {
+            throw new RuntimeException("Quantity can't be null");
+        }
         Integer quantityToBeOrdered = frontendProduct.getQuantity();
 
-        //in shopping cart-ul userului adus adaugam produsul trimis din frontend
-        optionalProduct.ifPresent(product -> {
-            //setez pe produs quantity-ul si il adaug in shopping cart
+        MyUser loggedUser = getLoggedUser();
+
+        desiredProductOptional.ifPresent(desiredProduct -> {
             Product productToBeAddedToShoppingCart = new Product();
-            productToBeAddedToShoppingCart.setId(product.getId());
-            productToBeAddedToShoppingCart.setPrice(product.getPrice());
-            productToBeAddedToShoppingCart.setName(product.getName());
+            productToBeAddedToShoppingCart.setId(desiredProduct.getId());
+            productToBeAddedToShoppingCart.setPrice(desiredProduct.getPrice());
+            productToBeAddedToShoppingCart.setName(desiredProduct.getName());
             productToBeAddedToShoppingCart.setQuantity(quantityToBeOrdered);
-            userByUserName.getShoppingCart().addProductToShoppingCart(productToBeAddedToShoppingCart);
+            loggedUser.getShoppingCart().addProductToShoppingCart(productToBeAddedToShoppingCart);
 
+            desiredProduct.setQuantity(desiredProduct.getQuantity() - quantityToBeOrdered);
 
-            product.setQuantity(product.getQuantity() - quantityToBeOrdered);
-            quantityRepository.save(new ShoppingCartProductQuantity(userByUserName.getId().intValue(), product.getId(), quantityToBeOrdered));
-            productRepository.save(product);
-            userService.updateUser(userByUserName);
+            Optional<ShoppingCartProductQuantity> cartProductQuantityOptional = quantityRepository.findByShoppingCartIdAndProductId(loggedUser.getId().intValue(), desiredProduct.getId());
+            if (cartProductQuantityOptional.isEmpty()) {
+                quantityRepository.save(new ShoppingCartProductQuantity(loggedUser.getId().intValue(), desiredProduct.getId(), quantityToBeOrdered));
+            } else {
+                cartProductQuantityOptional.ifPresent(cartProductQuantity -> {
+                    cartProductQuantity.setQuantity(cartProductQuantity.getQuantity() + quantityToBeOrdered);
+                    quantityRepository.save(cartProductQuantity);
+                });
+            }
+            productRepository.save(desiredProduct);
+            userService.updateUser(loggedUser);
         });
 
         return Constants.REDIRECT_TO_PRODUCTS;
     }
 
+    @RequestMapping(value = "/remove/{productId}")
+    public String removeProductFromShoppingCart(@PathVariable Integer productId) {
+        MyUser loggedUser = getLoggedUser();
+
+        quantityRepository.getProductsByShoppingCartId(loggedUser.getId()).stream()
+                .filter(product -> product.getId().equals(productId))
+                .forEach(product -> {
+                    Optional<Product> productOptional = productRepository.findById(product.getId());
+                    productOptional.ifPresent(pr -> {
+                        pr.setQuantity(pr.getQuantity() + product.getQuantity());
+                        productRepository.save(pr);
+                    });
+                });
+        quantityRepository.deleteByShoppingCartIdAndProductId(loggedUser.getId().intValue(), productId);
+
+        return Constants.REDIRECT_TO_SHOPPING_CART;
+    }
+
     @GetMapping(value = "/add-new")
     public String addProduct(Model model) {
         model.addAttribute("product", new Product());
-        return "add-product";
+        return Constants.ADD_PRODUCT;
     }
 
     @PostMapping(value = "/add-new")
@@ -94,4 +109,8 @@ public class ProductController {
         return Constants.REDIRECT_TO_PRODUCTS;
     }
 
+    private MyUser getLoggedUser() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return userService.findUserByUserName(auth.getName());
+    }
 }

@@ -41,7 +41,7 @@
                     <td><span th:text="${product.name}">  </span></td>
                     <td><span th:text="${product.price}"> </span></td>
                     <td><span th:text="${product.quantity}"> </span></td>
-                    <td><a th:href="@{'/shopping-cart/product/remove/' + ${product.id}}"
+                    <td><a th:href="@{'/product/remove/' + ${product.id}}"
                            class="fa-solid fa-trash"></a>
                     </td>
                 </tr>

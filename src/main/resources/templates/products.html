@@ -52,7 +52,7 @@
                                 <input type="button" value="-"
                                        class="button-minus border rounded-circle  icon-shape icon-sm mx-1 "
                                        data-field="quantity">
-                                <input type="number" th:value="${quantity}" step="1" max="10" value="1"
+                                <input type="number" th:value="${quantity}" step="1"
                                        name="quantity"
                                        class="quantity-field border-0 text-center w-25">
                                 <input type="button" value="+"
@@ -110,19 +110,6 @@
     $('.input-group').on('click', '.button-minus', function(e) {
         decrementValue(e);
     });
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 </script>
 </body>
