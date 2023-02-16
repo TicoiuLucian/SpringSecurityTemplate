@@ -6,12 +6,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import ro.itschool.controller.model.ProductDTO;
 import ro.itschool.entity.MyUser;
 import ro.itschool.entity.Product;
 import ro.itschool.entity.ShoppingCartProductQuantity;
-import ro.itschool.repository.ProductRepository;
 import ro.itschool.repository.ShoppingCartProductQuantityRepository;
-import ro.itschool.service.ShoppingCartService;
+import ro.itschool.service.ProductService;
+import ro.itschool.service.impl.ShoppingCartServiceImpl;
 import ro.itschool.service.UserService;
 import ro.itschool.util.Constants;
 
@@ -22,9 +23,9 @@ import java.util.Optional;
 @RequestMapping(value = "/product")
 public class ProductController {
 
-    private final ProductRepository productRepository;
+    private final ProductService productService;
 
-    private final ShoppingCartService shoppingCartService;
+    private final ShoppingCartServiceImpl shoppingCartService;
 
     private final UserService userService;
 
@@ -32,20 +33,20 @@ public class ProductController {
 
     @RequestMapping(value = {"/all"})
     public String index(Model model) {
-        model.addAttribute("products", productRepository.findByQuantityGreaterThan(0L));
+        model.addAttribute("products", productService.findByQuantityGreaterThan(0L));
         return "products";
     }
 
     @RequestMapping(value = "/delete/{id}")
     public String deleteProduct(@PathVariable Integer id) {
         shoppingCartService.deleteProductByIdFromShoppingCart(id);
-        productRepository.deleteById(id);
+        productService.deleteById(id);
         return Constants.REDIRECT_TO_PRODUCTS;
     }
 
     @RequestMapping(value = "/add/{id}")
     public String addProductToShoppingCart(@PathVariable Integer id, @ModelAttribute("product") @RequestBody Product frontendProduct) {
-        Optional<Product> desiredProductOptional = productRepository.findById(id);
+        Optional<ProductDTO> desiredProductOptional = productService.findById(id);
         if (frontendProduct == null) {
             throw new RuntimeException("Quantity can't be null");
         }
@@ -72,7 +73,7 @@ public class ProductController {
                     quantityRepository.save(cartProductQuantity);
                 });
             }
-            productRepository.save(desiredProduct);
+            productService.save(desiredProduct);
             userService.updateUser(loggedUser);
         });
 
@@ -86,10 +87,10 @@ public class ProductController {
         quantityRepository.getProductsByShoppingCartId(loggedUser.getId()).stream()
                 .filter(product -> product.getId().equals(productId))
                 .forEach(product -> {
-                    Optional<Product> productOptional = productRepository.findById(product.getId());
+                    Optional<ProductDTO> productOptional = productService.findById(product.getId());
                     productOptional.ifPresent(pr -> {
                         pr.setQuantity(pr.getQuantity() + product.getQuantity());
-                        productRepository.save(pr);
+                        productService.save(pr);
                     });
                 });
         quantityRepository.deleteByShoppingCartIdAndProductId(loggedUser.getId().intValue(), productId);
@@ -104,8 +105,8 @@ public class ProductController {
     }
 
     @PostMapping(value = "/add-new")
-    public String addProduct(@ModelAttribute("product") @RequestBody Product product) {
-        productRepository.save(product);
+    public String addProduct(@ModelAttribute("product") @RequestBody ProductDTO product) {
+        productService.save(product);
         return Constants.REDIRECT_TO_PRODUCTS;
     }
 

@@ -24,7 +24,6 @@ public class Product {
 
     private float price;
 
-
     private Integer quantity;
 
     public Product(String name, float price, Integer quantity) {

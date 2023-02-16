@@ -12,7 +12,7 @@ import ro.itschool.entity.Product;
 import ro.itschool.repository.OrderRepository;
 import ro.itschool.repository.ProductRepository;
 import ro.itschool.repository.ShoppingCartProductQuantityRepository;
-import ro.itschool.service.ShoppingCartService;
+import ro.itschool.service.impl.ShoppingCartServiceImpl;
 import ro.itschool.service.UserService;
 
 import java.util.List;
@@ -22,7 +22,7 @@ import java.util.List;
 public class ShoppingCartController {
 
     @Autowired
-    private ShoppingCartService shoppingCartService;
+    private ShoppingCartServiceImpl shoppingCartService;
 
     @Autowired
     private OrderRepository orderRepository;

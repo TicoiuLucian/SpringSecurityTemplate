@@ -10,7 +10,7 @@ import ro.itschool.repository.ProductRepository;
 import ro.itschool.repository.RoleRepository;
 import ro.itschool.repository.ShoppingCartProductQuantityRepository;
 import ro.itschool.repository.UserRepository;
-import ro.itschool.service.ShoppingCartService;
+import ro.itschool.service.impl.ShoppingCartServiceImpl;
 import ro.itschool.service.UserService;
 import ro.itschool.util.Constants;
 
@@ -29,7 +29,7 @@ public class RunAtStartup {
 
     private final ProductRepository productRepository;
 
-    private final ShoppingCartService shoppingCartService;
+    private final ShoppingCartServiceImpl shoppingCartService;
 
     private final UserRepository userRepository;
 
@@ -44,7 +44,7 @@ public class RunAtStartup {
 
         saveUser();
 //        saveUserToDelete();
-//        saveAdminUser();
+        saveAdminUser();
         save50Products();
     }
 
